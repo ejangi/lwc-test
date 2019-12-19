@@ -1,7 +1,5 @@
-import { LightningElement, track, api } from 'lwc';
-import firebase from '../../../firebase.js';
-
-const db = firebase.firestore();
+import { LightningElement, track, api, wire } from 'lwc';
+import { getGreetings } from '../../../models/greeting.js';
 
 const SPEED_CLASS_MAP = {
     slow: 'fade-slow',
@@ -14,7 +12,9 @@ export default class Greeting extends LightningElement {
     @track animationSpeed = DEFAULT_SPEED;
     @track index = 0;
     @track isAnimating = true;
-    @track greetings = ['Loading...'];
+    
+    @wire(getGreetings, {})
+    greetings = [];
 
     @api
     set speed(value) {
@@ -55,29 +55,5 @@ export default class Greeting extends LightningElement {
     // Update to the next greeting and start animating
     updateGreeting() {
         this.isAnimating = true;
-    }
-
-    // When component is inserted into the DOM:
-    connectedCallback() {
-        this.getGreetings();
-    }
-
-    getGreetings() {
-        const that = this;
-
-        db.collection("greetings")
-            .get()
-            .then(function(querySnapshot) {
-                querySnapshot.forEach(function(doc) {
-                    // doc.data() is never undefined for query doc snapshots
-                    let data = doc.data();
-                    if (data.greeting != undefined) {
-                        that.greetings.push(data.greeting);
-                    }
-                });
-            })
-            .catch(function(error) {
-                console.log("Error getting documents: ", error);
-            });
     }
 }
