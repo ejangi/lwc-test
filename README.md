@@ -1,6 +1,6 @@
 # lwc-test
 
-A simple web app to test Lightning Web Components (Open Source) with MobX for state.
+A simple web app to test Lightning Web Components (Open Source).
 
 ## How to start?
 
