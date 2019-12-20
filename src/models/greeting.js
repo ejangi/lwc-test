@@ -5,6 +5,8 @@ const db = firebase.firestore();
 
 
 export function getGreetings(config) {
+console.log('This never fires... 🤷🏼‍♂️');
+console.log('Also, where does getObservable and makeReadOnlyMembrane come from???');
     return getObservable(config)
         .map(makeReadOnlyMembrane)
         .toPromise();
@@ -16,7 +18,7 @@ register(getGreetings, function getGreetingsWireAdapterFactory(eventTarget) {
     let subscription;
     let config;
     let greetings;
-
+console.log('this never fires either... 🤷🏼‍♂️');
     // Invoked when config is updated.
     eventTarget.addListener('config', newConfig => {
         // Capture config for use during subscription.
@@ -30,16 +32,15 @@ register(getGreetings, function getGreetingsWireAdapterFactory(eventTarget) {
             .map(makeReadOnlyMembrane)
             .subscribe({
                 next: data => 
-                    wiredEventTarget.dispatchEvent(
-                        new ValueChangedEvent({ data, error: undefined })
+                    eventTarget.dispatchEvent(
+                        new ValueChangedEvent({ data: greetings, error: undefined })
                     ),
                 error: error =>
-                    wiredEventTarget.dispatchEvent(
+                    eventTarget.dispatchEvent(
                         new ValueChangedEvent({ data: undefined, error })
                     ),
             });
 
-console.log('Connected...');
         // Get the data from Firestore:
         db.collection("greetings")
             .get()
@@ -51,8 +52,8 @@ console.log('Connected...');
                         greetings.push(data.greeting);
                     }
                 });
-console.log(greetings);
-                wiredEventTarget.dispatchEvent(
+
+                eventTarget.dispatchEvent(
                     new ValueChangedEvent({ data: greetings, error: undefined })
                 );
             })
